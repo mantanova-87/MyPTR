@@ -612,9 +612,9 @@
                 return;
             }
 
-            const docRef = doc(db, "daily_tasks", getDocId());
+            const docRef = db.collection("daily_tasks").doc(getDocId());
             const newState = { ...savedState, [taskId]: !savedState[taskId] };
-            await setDoc(docRef, { tasks: newState }, { merge: true });
+            await docRef.set({ tasks: newState }, { merge: true });
         }
 
         function renderLog(logs) {
@@ -634,9 +634,9 @@
         }
 
         async function deleteLog(entryToDelete) {
-            const docRef = doc(db, "daily_tasks", getDocId());
-            await updateDoc(docRef, {
-                logs: arrayRemove(entryToDelete)
+            const docRef = db.collection("daily_tasks").doc(getDocId());
+            await docRef.update({
+                logs: firebase.firestore.FieldValue.arrayRemove(entryToDelete)
             });
         }
 
@@ -649,17 +649,12 @@
             const timeStr = `${now.toLocaleDateString()} @ ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             const newEntry = { time: timeStr, text, timestamp: Date.now() };
 
-            const docRef = doc(db, "daily_tasks", getDocId());
-            await updateDoc(docRef, {
-                logs: arrayUnion(newEntry)
+            const docRef = db.collection("daily_tasks").doc(getDocId());
+            await docRef.update({
+                logs: firebase.firestore.FieldValue.arrayUnion(newEntry)
             }).catch(async (err) => {
                 // If doc doesn't exist, create it
-                if (err.code === 'not-found') {
-                    await setDoc(docRef, { logs: [newEntry] });
-                } else {
-                    // Possible if doc exists but logs field doesn't
-                    await setDoc(docRef, { logs: [newEntry] }, { merge: true });
-                }
+                await docRef.set({ logs: [newEntry] }, { merge: true });
             });
 
             textarea.value = '';
@@ -670,14 +665,19 @@
         // ───────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             const dayName = renderDate();
-            const docRef = doc(db, "daily_tasks", getDocId());
 
-            // Listen for real-time updates
-            onSnapshot(docRef, (snapshot) => {
-                const data = snapshot.data() || {};
-                renderTasks(dayName, data.tasks || {});
-                renderLog((data.logs || []).sort((a, b) => b.timestamp - a.timestamp));
-            });
+            if (typeof db !== 'undefined') {
+                const docRef = db.collection("daily_tasks").doc(getDocId());
+
+                // Listen for real-time updates
+                docRef.onSnapshot((snapshot) => {
+                    const data = snapshot.data() || {};
+                    renderTasks(dayName, data.tasks || {});
+                    renderLog((data.logs || []).sort((a, b) => b.timestamp - a.timestamp));
+                });
+            } else {
+                renderTasks(dayName, {});
+            }
 
             document.getElementById('addUpdateBtn').onclick = window.submitUpdate;
             updateClock();
