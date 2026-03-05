@@ -1,6 +1,7 @@
 {
   "name": "iacon-hall-of-records",
   "version": "1.0.0",
+  "type": "module",
   "description": "Premium personal records and task tracking system.",
   "main": "index.html",
   "scripts": {
