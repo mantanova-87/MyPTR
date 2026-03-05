@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "name": "vector-sigma",
+  "routes": [
+    {
+      "src": "/api/env",
+      "dest": "/api/env.js"
+    },
+    {
+      "src": "/auth",
+      "dest": "/auth.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/dashboard.html"
+    },
+    {
+      "src": "/missions",
+      "dest": "/missions.html"
+    },
+    {
+      "src": "/sem2",
+      "dest": "/sem2.html"
+    },
+    {
+      "src": "/progress",
+      "dest": "/progress.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

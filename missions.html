@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IACON HALL OF RECORDS - Mission Reports</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="icon.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <h1 class="glitch" data-text="MISSION REPORTS & STATUS">MISSION REPORTS & STATUS</h1>
+            <p class="subtitle">AGENT 001 // MANTAVYA KUMAR // ACTIVE DEPLOYMENT</p>
+        </header>
+
+        <!-- Primary Mission Block -->
+        <section class="mission-panel">
+            <div class="panel-title-bar">
+                <span class="panel-icon">🎯</span>
+                <span>PRIMARY MISSION DIRECTIVE</span>
+                <span class="status-badge active">● ACTIVE</span>
+            </div>
+            <div class="mission-card">
+                <p class="mission-full-text">BACHELOR OF TECHNOLOGY IN COMPUTER SCIENCE ENGINEERING WITH SPECIALISATION
+                    IN CYBERSECURITY UNDER THE MENTORSHIP OF DEFENCE RESEARCH AND DEVELOPMENT ORGANISATION</p>
+                <div class="mission-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">DEPLOYMENT LOCATION</span>
+                        <span class="meta-value">CENTRAL UNIVERSITY OF JAMMU</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">RANK / YEAR</span>
+                        <span class="meta-value">1ST YEAR</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">DESIGNATION</span>
+                        <span class="meta-value">2ND SEMESTER</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">MISSION DURATION</span>
+                        <span class="meta-value" id="missionTimer">CALCULATING...</span>
+                    </div>
+                </div>
+
+                <!-- Overall Progress -->
+                <div class="progress-section">
+                    <div class="progress-label">
+                        <span>MISSION PROGRESS</span>
+                        <span id="progressPct">~12.5%</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: 12.5%"></div>
+                    </div>
+                    <p class="progress-note">1 OF 8 SEMESTERS COMPLETED</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Semester Status Grid -->
+        <section class="mission-panel">
+            <div class="panel-title-bar">
+                <span class="panel-icon">📊</span>
+                <span>SEMESTER STATUS TRACKER</span>
+            </div>
+            <div class="semester-grid">
+                <div class="semester-card completed">
+                    <span class="sem-number">SEM 1</span>
+                    <span class="sem-status">✔ COMPLETED</span>
+                </div>
+                <a href="/sem2" class="semester-card in-progress sem-link" title="OPEN DAILY TRACKER">
+                    <span class="sem-number">SEM 2</span>
+                    <span class="sem-status blink-mild">⚡ IN PROGRESS</span>
+                    <span style="font-size:0.65rem;letter-spacing:1px;color:#00ccff;margin-top:0.3rem;">TAP TO TRACK
+                        ›</span>
+                </a>
+                <div class="semester-card pending">
+                    <span class="sem-number">SEM 3</span>
+                    <span class="sem-status">○ PENDING</span>
+                </div>
+                <div class="semester-card pending">
+                    <span class="sem-number">SEM 4</span>
+                    <span class="sem-status">○ PENDING</span>
+                </div>
+                <div class="semester-card pending">
+                    <span class="sem-number">SEM 5</span>
+                    <span class="sem-status">○ PENDING</span>
+                </div>
+                <div class="semester-card pending">
+                    <span class="sem-number">SEM 6</span>
+                    <span class="sem-status">○ PENDING</span>
+                </div>
+                <div class="semester-card pending">
+                    <span class="sem-number">SEM 7</span>
+                    <span class="sem-status">○ PENDING</span>
+                </div>
+                <div class="semester-card pending">
+                    <span class="sem-number">SEM 8</span>
+                    <span class="sem-status">○ PENDING</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Log -->
+        <section class="mission-panel">
+            <div class="panel-title-bar">
+                <span class="panel-icon">📋</span>
+                <span>MISSION LOG</span>
+            </div>
+            <div class="mission-log">
+                <div class="log-entry">
+                    <span class="log-date">DEC 2024</span>
+                    <span class="log-event">◆ MISSION COMMENCED — ENROLLED AT CENTRAL UNIVERSITY OF JAMMU</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-date">JAN 2025</span>
+                    <span class="log-event">◆ SEMESTER 1 BEGUN — INITIAL PHASE ACTIVE</span>
+                </div>
+                <div class="log-entry success">
+                    <span class="log-date">JUN 2025</span>
+                    <span class="log-event">✔ SEMESTER 1 CLEARED — PHASE COMPLETE</span>
+                </div>
+                <div class="log-entry active">
+                    <span class="log-date">JUL 2025</span>
+                    <span class="log-event blink-mild">⚡ SEMESTER 2 COMMENCED — CURRENT PHASE ACTIVE</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <div class="missions-footer">
+            <a href="/dashboard" class="cyber-button">
+                <span class="button-text">← RETURN TO DASHBOARD</span>
+            </a>
+            <a href="/sem2" class="cyber-button">
+                <span class="button-text">📋 SEM 2 TRACKER</span>
+            </a>
+            <a href="/progress" class="cyber-button">
+                <span class="button-text">🕸 PROGRESS RADAR</span>
+            </a>
+            <a href="/" class="cyber-button logout-btn">
+                <span class="button-text">TERMINATE SESSION</span>
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Calculate mission duration since deployment start: Dec 2024
+            const start = new Date(2024, 11, 1); // Dec 2024
+            const now = new Date();
+            const diffMs = now - start;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const months = Math.floor(diffDays / 30);
+            const days = diffDays % 30;
+            document.getElementById('missionTimer').textContent = `${months} MONTHS, ${days} DAYS`;
+        });
+    </script>
+</body>
+
+</html>

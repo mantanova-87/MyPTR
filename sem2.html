@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IACON HALL OF RECORDS - SEM 2 Daily Tracker</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="icon.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* ---- SEM 2 TRACKER SPECIFIC STYLES ---- */
+        .tracker-container {
+            width: 100%;
+            max-width: 900px;
+            z-index: 10;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: zoomIn 0.8s ease forwards;
+        }
+
+        .date-banner {
+            width: 100%;
+            background: rgba(0, 255, 204, 0.06);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-day {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--primary-glow);
+            letter-spacing: 4px;
+        }
+
+        .date-full {
+            font-size: 1rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .live-time {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            color: #00ccff;
+            letter-spacing: 3px;
+        }
+
+        /* Task List */
+        .task-panel {
+            width: 100%;
+            background: rgba(5, 5, 20, 0.75);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 204, 0.25);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-panel-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.5rem;
+            background: rgba(0, 255, 204, 0.07);
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--primary-glow);
+        }
+
+        .completion-badge {
+            margin-left: auto;
+            font-size: 0.85rem;
+            color: #00ff88;
+            letter-spacing: 1px;
+        }
+
+        .task-list {
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            background: rgba(0, 0, 0, 0.35);
+            border-left: 3px solid rgba(0, 255, 204, 0.25);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+
+        .task-item:hover {
+            border-left-color: var(--primary-glow);
+            background: rgba(0, 255, 204, 0.05);
+        }
+
+        .task-item.done {
+            border-left-color: #00ff88;
+            background: rgba(0, 255, 136, 0.06);
+            opacity: 0.8;
+        }
+
+        /* LOCKED TASK */
+        .task-item.locked {
+            border-left-color: rgba(255, 100, 0, 0.4);
+            background: rgba(255, 80, 0, 0.04);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .task-item.locked:hover {
+            border-left-color: rgba(255, 100, 0, 0.7);
+            background: rgba(255, 80, 0, 0.07);
+        }
+
+        .task-item.locked .task-text {
+            color: var(--text-muted);
+        }
+
+        .task-item.locked .task-time {
+            color: rgba(255, 140, 0, 0.8);
+        }
+
+        .lock-badge {
+            font-size: 0.7rem;
+            color: rgba(255, 140, 0, 0.9);
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: 2px solid rgba(0, 255, 204, 0.5);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .task-item.locked .task-checkbox {
+            border-color: rgba(255, 140, 0, 0.5);
+            background: rgba(255, 80, 0, 0.1);
+        }
+
+        .task-item.done .task-checkbox {
+            background: #00ff88;
+            border-color: #00ff88;
+            color: #000;
+        }
+
+        .task-text {
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .task-item.done .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-time {
+            font-size: 0.75rem;
+            color: var(--primary-glow);
+            letter-spacing: 1px;
+            min-width: 120px;
+            text-align: right;
+        }
+
+        .task-item.done .task-time {
+            color: var(--text-muted);
+        }
+
+        /* No tasks configured */
+        .no-tasks {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        /* Update / Log Section */
+        .update-panel {
+            width: 100%;
+            background: rgba(5, 5, 20, 0.75);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 204, 0.25);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .update-form {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .update-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            padding: 1rem;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .update-textarea:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+
+        .update-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .add-update-btn {
+            align-self: flex-end;
+            padding: 0.7rem 1.5rem;
+            background: transparent;
+            border: 2px solid var(--primary-glow);
+            color: var(--primary-glow);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .add-update-btn:hover {
+            background: var(--primary-glow);
+            color: #000;
+        }
+
+        /* Log Entries */
+        .update-log {
+            border-top: 1px solid rgba(0, 255, 204, 0.15);
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .update-log:empty::before {
+            content: 'NO UPDATES LOGGED YET.';
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            display: block;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .update-entry {
+            padding: 0.75rem 1rem;
+            background: rgba(0, 200, 255, 0.05);
+            border-left: 3px solid #00ccff;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            position: relative;
+        }
+
+        .update-entry-time {
+            font-size: 0.7rem;
+            color: #00ccff;
+            letter-spacing: 2px;
+        }
+
+        .update-entry-text {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+        }
+
+        .delete-entry-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            background: none;
+            border: none;
+            color: rgba(255, 80, 80, 0.5);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .delete-entry-btn:hover {
+            color: #ff4444;
+        }
+
+        /* Footer Nav */
+        .tracker-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .date-banner {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .date-day {
+                font-size: 1.4rem;
+            }
+
+            .task-item {
+                flex-wrap: wrap;
+            }
+
+            .task-time {
+                min-width: unset;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+
+    <main class="tracker-container">
+        <header class="dashboard-header">
+            <h1 class="glitch" data-text="SEM 2 — DAILY TRACKER">SEM 2 — DAILY TRACKER</h1>
+            <p class="subtitle">AGENT 001 // CURRENT PHASE: 2ND SEMESTER</p>
+        </header>
+
+        <!-- Date / Time Banner -->
+        <div class="date-banner">
+            <div>
+                <div class="date-day" id="dayName">LOADING...</div>
+                <div class="date-full" id="fullDate"></div>
+            </div>
+            <div class="live-time" id="liveTime">00:00:00</div>
+        </div>
+
+        <!-- Daily Task List -->
+        <div class="task-panel">
+            <div class="task-panel-title">
+                <span>📋</span>
+                <span id="taskPanelTitle">TASKS FOR TODAY</span>
+                <span class="completion-badge" id="completionBadge">0 / 0 DONE</span>
+            </div>
+            <div class="task-list" id="taskList">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- Add Update Section -->
+        <div class="update-panel">
+            <div class="task-panel-title">
+                <span>✏️</span>
+                <span>ADD DAILY UPDATE / NOTES</span>
+            </div>
+            <div class="update-form">
+                <textarea class="update-textarea" id="updateInput"
+                    placeholder="LOG YOUR PROGRESS, NOTES OR OBSERVATIONS FOR TODAY..."></textarea>
+                <button class="add-update-btn" id="addUpdateBtn">+ SUBMIT UPDATE</button>
+            </div>
+            <div class="update-log" id="updateLog">
+                <!-- Log entries injected by JS -->
+            </div>
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="tracker-footer">
+            <a href="/missions" class="cyber-button">
+                <span class="button-text">← MISSION REPORTS</span>
+            </a>
+            <a href="/progress" class="cyber-button">
+                <span class="button-text">🕸 PROGRESS RADAR</span>
+            </a>
+            <a href="/dashboard" class="cyber-button">
+                <span class="button-text">🏠 DASHBOARD</span>
+            </a>
+            <a href="/" class="cyber-button logout-btn">
+                <span class="button-text">TERMINATE SESSION</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- Environment variable injection -->
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script src="/api/env"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = window.__ENV__ || {
+            apiKey: "LOCAL_BYPASS",
+            authDomain: "LOCAL_BYPASS",
+            projectId: "LOCAL_BYPASS",
+            storageBucket: "LOCAL_BYPASS",
+            messagingSenderId: "LOCAL_BYPASS",
+            appId: "LOCAL_BYPASS"
+        };
+
+        if (typeof firebase !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+            // Silent login
+            firebase.auth().signInAnonymously().catch(err => console.warn("Auth check:", err));
+            var db = firebase.firestore();
+        }
+
+        // ───────────────────────────────────────────
+        //  TASK DEFINITIONS
+        // ───────────────────────────────────────────
+        const TASK_SCHEDULE = {
+            MONDAY: [
+                { id: 'mon1', text: 'WAKE UP', time: '06:00 AM', lockBefore: { h: 6, m: 30 } },
+                { id: 'mon2', text: 'EXERCISE (KEGEL DAY)', time: '06:30 – 07:30 AM', lockBefore: { h: 7, m: 30 } },
+                { id: 'mon3', text: 'BATH, CHANGE & BREAKFAST', time: '07:30 – 09:00 AM', lockBefore: { h: 9, m: 0 } },
+                { id: 'mon4', text: 'CLASS', time: 'SCHEDULED HOURS', lockBefore: { h: 16, m: 0 } },
+                { id: 'mon5', text: 'DATA STRUCTURE STUDY', time: '04:00 – 06:00 PM', lockBefore: { h: 18, m: 0 } },
+                { id: 'mon6', text: 'DINNER + OTHER CHORES', time: '08:00 – 09:00 PM', lockBefore: { h: 21, m: 0 } },
+                { id: 'mon7', text: 'WORK ON NEXERA + FORM BHARO + EXTRA STUDY', time: '09:00 – 11:00 PM', lockBefore: { h: 23, m: 0 } },
+                { id: 'mon8', text: 'SOCIAL MEDIA CONTENT FOR INSTAGRAM & YOUTUBE', time: 'AFTER 11:00 PM', lockBefore: { h: 23, m: 59 } }
+            ],
+            TUESDAY: [
+                { id: 'tue1', text: 'WAKE UP', time: '06:00 AM', lockBefore: { h: 6, m: 30 } },
+                { id: 'tue2', text: 'EXERCISE (KEGEL DAY)', time: '06:30 – 07:30 AM', lockBefore: { h: 7, m: 30 } },
+                { id: 'tue3', text: 'BATH, CHANGE & BREAKFAST', time: '07:30 – 09:00 AM', lockBefore: { h: 9, m: 0 } },
+                { id: 'tue4', text: 'CLASS', time: 'SCHEDULED HOURS', lockBefore: { h: 16, m: 0 } },
+                { id: 'tue5', text: 'DATA SCIENCE STUDY', time: '04:00 – 06:00 PM', lockBefore: { h: 18, m: 0 } },
+                { id: 'tue6', text: 'DINNER + OTHER CHORES', time: '08:00 – 09:00 PM', lockBefore: { h: 21, m: 0 } },
+                { id: 'tue7', text: 'WORK ON NEXERA + FORM BHARO + EXTRA STUDY', time: '09:00 – 11:00 PM', lockBefore: { h: 23, m: 0 } },
+                { id: 'tue8', text: 'WORK ON SOCIAL MEDIA CONTENT FOR INSTAGRAM & YOUTUBE', time: 'AFTER 11:00 PM', lockBefore: { h: 23, m: 59 } }
+            ],
+            WEDNESDAY: [
+                { id: 'wed1', text: 'WAKE UP', time: '06:00 AM', lockBefore: { h: 6, m: 30 } },
+                { id: 'wed2', text: 'EXERCISE (KEGEL DAY)', time: '06:30 – 07:30 AM', lockBefore: { h: 7, m: 30 } },
+                { id: 'wed3', text: 'BATH, CHANGE & BREAKFAST', time: '07:30 – 09:00 AM', lockBefore: { h: 9, m: 0 } },
+                { id: 'wed4', text: 'CLASS', time: 'SCHEDULED HOURS', lockBefore: { h: 16, m: 0 } },
+                { id: 'wed5', text: 'MATHEMATICS STUDY', time: '04:00 – 06:00 PM', lockBefore: { h: 18, m: 0 } },
+                { id: 'wed6', text: 'DINNER + OTHER CHORES', time: '08:00 – 09:00 PM', lockBefore: { h: 21, m: 0 } },
+                { id: 'wed7', text: 'WORK ON NEXERA + FORM BHARO + EXTRA STUDY', time: '09:00 – 11:00 PM', lockBefore: { h: 23, m: 0 } },
+                { id: 'wed8', text: 'SOCIAL MEDIA CONTENT FOR INSTAGRAM & YOUTUBE', time: 'AFTER 11:00 PM', lockBefore: { h: 23, m: 59 } }
+            ],
+            THURSDAY: [
+                { id: 'thu1', text: 'WAKE UP', time: '06:00 AM', lockBefore: { h: 6, m: 30 } },
+                { id: 'thu2', text: 'EXERCISE (KEGEL DAY)', time: '06:30 – 07:30 AM', lockBefore: { h: 7, m: 30 } },
+                { id: 'thu3', text: 'BATH, CHANGE & BREAKFAST', time: '07:30 – 09:00 AM', lockBefore: { h: 9, m: 0 } },
+                { id: 'thu4', text: 'CLASS', time: 'SCHEDULED HOURS', lockBefore: { h: 16, m: 0 } },
+                { id: 'thu5', text: 'QUANTUM STUDY', time: '04:00 – 06:00 PM', lockBefore: { h: 18, m: 0 } },
+                { id: 'thu6', text: 'DINNER + OTHER CHORES', time: '08:00 – 09:00 PM', lockBefore: { h: 21, m: 0 } },
+                { id: 'thu7', text: 'WORK ON NEXERA + FORM BHARO + EXTRA STUDY', time: '09:00 – 11:00 PM', lockBefore: { h: 23, m: 0 } },
+                { id: 'thu8', text: 'SOCIAL MEDIA CONTENT FOR INSTAGRAM & YOUTUBE', time: 'AFTER 11:00 PM', lockBefore: { h: 23, m: 59 } }
+            ],
+            FRIDAY: [
+                { id: 'fri1', text: 'WAKE UP', time: '06:00 AM', lockBefore: { h: 6, m: 30 } },
+                { id: 'fri2', text: 'EXERCISE (KEGEL DAY)', time: '06:30 – 07:30 AM', lockBefore: { h: 7, m: 30 } },
+                { id: 'fri3', text: 'BATH, CHANGE & BREAKFAST', time: '07:30 – 09:00 AM', lockBefore: { h: 9, m: 0 } },
+                { id: 'fri4', text: 'CLASS', time: 'SCHEDULED HOURS', lockBefore: { h: 16, m: 0 } },
+                { id: 'fri5', text: 'AI + CYBER SECURITY STUDY', time: '04:00 – 06:00 PM', lockBefore: { h: 18, m: 0 } },
+                { id: 'fri6', text: 'DINNER + OTHER CHORES', time: '08:00 – 09:00 PM', lockBefore: { h: 21, m: 0 } },
+                { id: 'fri7', text: 'WORK ON NEXERA + FORM BHARO + EXTRA STUDY', time: '09:00 – 11:00 PM', lockBefore: { h: 23, m: 0 } },
+                { id: 'fri8', text: 'SOCIAL MEDIA CONTENT FOR INSTAGRAM & YOUTUBE', time: 'AFTER 11:00 PM', lockBefore: { h: 23, m: 59 } }
+            ],
+            SATURDAY: [
+                { id: 'sat1', text: 'WAKE UP', time: '06:00 AM', lockBefore: { h: 6, m: 30 } },
+                { id: 'sat2', text: 'EXERCISE', time: '06:30 – 07:30 AM', lockBefore: { h: 7, m: 30 } },
+                { id: 'sat3', text: 'BREAKFAST', time: '07:30 – 09:00 AM', lockBefore: { h: 9, m: 0 } },
+                { id: 'sat4', text: 'WORK ON WHAT\'S REQUIRED', time: 'AS NEEDED', lockBefore: null }
+            ],
+            SUNDAY: [
+                { id: 'sun1', text: 'UNPLANNED DAY — NO FIXED SCHEDULE. REST OR IMPROVISE.', time: '🌀 FREE', lockBefore: null }
+            ]
+        };
+
+        const DAY_NAMES = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        const MONTH_NAMES = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+        // ───────────────────────────────────────────
+        //  LIVE CLOCK
+        // ───────────────────────────────────────────
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const el = document.getElementById('liveTime');
+            if (el) el.textContent = `${h}:${m}:${s}`;
+        }
+
+        // ───────────────────────────────────────────
+        //  RENDER DATE
+        // ───────────────────────────────────────────
+        function renderDate() {
+            const now = new Date();
+            const dayName = DAY_NAMES[now.getDay()];
+            const dateStr = `${String(now.getDate()).padStart(2, '0')} ${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`;
+            document.getElementById('dayName').textContent = dayName;
+            document.getElementById('fullDate').textContent = dateStr;
+            document.getElementById('taskPanelTitle').textContent = `TASKS FOR ${dayName}`;
+            return dayName;
+        }
+
+        // ───────────────────────────────────────────
+        //  FIREBASE SYNC
+        // ───────────────────────────────────────────
+        function getDocId() {
+            const today = new Date();
+            // Use local date string as ID to isolate data by day
+            return today.toLocaleDateString('en-CA'); // YYYY-MM-DD
+        }
+
+        // Returns true if current time is past lock time
+        function isUnlocked(task) {
+            if (!task.lockBefore) return true;
+            const now = new Date();
+            const currentMins = now.getHours() * 60 + now.getMinutes();
+            const lockMins = task.lockBefore.h * 60 + task.lockBefore.m;
+            return currentMins >= lockMins;
+        }
+
+        function formatLockTime(lb) {
+            const period = lb.h >= 12 ? 'PM' : 'AM';
+            const h = lb.h > 12 ? lb.h - 12 : lb.h === 0 ? 12 : lb.h;
+            const m = String(lb.m).padStart(2, '0');
+            return `UNLOCKS AT ${h}:${m} ${period}`;
+        }
+
+        async function renderTasks(dayName, savedState = {}) {
+            const tasks = TASK_SCHEDULE[dayName];
+            const taskList = document.getElementById('taskList');
+            const completionBadge = document.getElementById('completionBadge');
+
+            if (!tasks) {
+                taskList.innerHTML = `<div class="no-tasks">⚠ NO TASKS CONFIGURED FOR ${dayName}.</div>`;
+                completionBadge.textContent = '— / — DONE';
+                return;
+            }
+
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                const isDone = !!savedState[task.id];
+                const unlocked = isUnlocked(task);
+                const isLocked = !unlocked && !isDone;
+
+                const item = document.createElement('div');
+                item.className = `task-item ${isDone ? 'done' : ''} ${isLocked ? 'locked' : ''}`;
+                item.dataset.id = task.id;
+                item.innerHTML = `
+                    <div class="task-checkbox">${isDone ? '✔' : isLocked ? '🔒' : ''}</div>
+                    <span class="task-text">${task.text}</span>
+                    ${isLocked && task.lockBefore
+                        ? `<span class="lock-badge">${formatLockTime(task.lockBefore)}</span>`
+                        : `<span class="task-time">${task.time}</span>`
+                    }
+                `;
+                item.onclick = () => toggleTask(task.id, dayName, isLocked, savedState);
+                taskList.appendChild(item);
+            });
+
+            const done = tasks.filter(t => savedState[t.id]).length;
+            completionBadge.textContent = `${done} / ${tasks.length} DONE`;
+        }
+
+        async function toggleTask(taskId, dayName, isLocked, savedState) {
+            if (isLocked) {
+                const el = document.querySelector(`.task-item[data-id="${taskId}"]`);
+                if (el) {
+                    el.style.borderLeftColor = '#ff3333';
+                    el.style.background = 'rgba(255,0,0,0.08)';
+                    setTimeout(() => { el.style.borderLeftColor = ''; el.style.background = ''; }, 600);
+                }
+                return;
+            }
+
+            const docRef = doc(db, "daily_tasks", getDocId());
+            const newState = { ...savedState, [taskId]: !savedState[taskId] };
+            await setDoc(docRef, { tasks: newState }, { merge: true });
+        }
+
+        function renderLog(logs) {
+            const container = document.getElementById('updateLog');
+            container.innerHTML = '';
+            logs.forEach((entry, idx) => {
+                const div = document.createElement('div');
+                div.className = 'update-entry';
+                div.innerHTML = `
+                    <span class="update-entry-time">📡 ${entry.time}</span>
+                    <span class="update-entry-text">${entry.text}</span>
+                    <button class="delete-entry-btn" title="Delete">✕</button>
+                `;
+                div.querySelector('.delete-entry-btn').onclick = () => deleteLog(entry);
+                container.appendChild(div);
+            });
+        }
+
+        async function deleteLog(entryToDelete) {
+            const docRef = doc(db, "daily_tasks", getDocId());
+            await updateDoc(docRef, {
+                logs: arrayRemove(entryToDelete)
+            });
+        }
+
+        window.submitUpdate = async () => {
+            const textarea = document.getElementById('updateInput');
+            const text = textarea.value.trim();
+            if (!text) return;
+
+            const now = new Date();
+            const timeStr = `${now.toLocaleDateString()} @ ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const newEntry = { time: timeStr, text, timestamp: Date.now() };
+
+            const docRef = doc(db, "daily_tasks", getDocId());
+            await updateDoc(docRef, {
+                logs: arrayUnion(newEntry)
+            }).catch(async (err) => {
+                // If doc doesn't exist, create it
+                if (err.code === 'not-found') {
+                    await setDoc(docRef, { logs: [newEntry] });
+                } else {
+                    // Possible if doc exists but logs field doesn't
+                    await setDoc(docRef, { logs: [newEntry] }, { merge: true });
+                }
+            });
+
+            textarea.value = '';
+        };
+
+        // ───────────────────────────────────────────
+        //  INIT & REAL-TIME SYNC
+        // ───────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const dayName = renderDate();
+            const docRef = doc(db, "daily_tasks", getDocId());
+
+            // Listen for real-time updates
+            onSnapshot(docRef, (snapshot) => {
+                const data = snapshot.data() || {};
+                renderTasks(dayName, data.tasks || {});
+                renderLog((data.logs || []).sort((a, b) => b.timestamp - a.timestamp));
+            });
+
+            document.getElementById('addUpdateBtn').onclick = window.submitUpdate;
+            updateClock();
+            setInterval(updateClock, 1000);
+            setInterval(() => renderDate(), 60000); // Re-render date/tasks periodically
+        });
+    </script>
+</body>
+
+</html>

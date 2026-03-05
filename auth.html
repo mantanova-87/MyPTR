@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IACON HALL OF RECORDS - Authenticate</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="icon.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+
+    <main class="container">
+        <div class="auth-container">
+            <h2 class="auth-title glitch" data-text="SYSTEM LOGIN">SYSTEM LOGIN</h2>
+            <p class="auth-subtitle">IDENTIFY YOURSELF TO PROCEED</p>
+
+            <form id="loginForm" class="cyber-form">
+                <div class="input-group">
+                    <label for="name">FULL NAME</label>
+                    <input type="text" id="name" required autocomplete="off" spellcheck="false" autocapitalize="none"
+                        autocorrect="off">
+                </div>
+                <div class="input-group">
+                    <label for="username">USERNAME</label>
+                    <input type="text" id="username" required autocomplete="off" spellcheck="false"
+                        autocapitalize="none" autocorrect="off">
+                </div>
+                <div class="input-group">
+                    <label for="password">PASSWORD</label>
+                    <input type="password" id="password" required>
+                </div>
+
+                <div id="errorMessage" class="error-message">ACCESS DENIED. INVALID CREDENTIALS.</div>
+
+                <button type="submit" class="cyber-button submit-btn">
+                    <span class="button-text">AUTHENTICATE</span>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Emergency Shutdown Overlay -->
+    <div id="dangerOverlay" class="danger-overlay hidden">
+        <div class="danger-content">
+            <div class="warning-symbol">⚠️</div>
+            <h1 class="danger-title glitch" data-text="SYSTEM BREACH ATTEMPT DETECTED">SYSTEM BREACH ATTEMPT DETECTED
+            </h1>
+            <h2 class="danger-subtitle">INITIATING SHUTDOWN PROTOCOLS</h2>
+            <h2 class="danger-countdown" id="countdownDisplay">SHUTDOWN IN 10 SECONDS</h2>
+        </div>
+    </div>
+
+    <!-- System Offline Overlay -->
+    <div id="offlineOverlay" class="offline-overlay hidden">
+        <h1 class="offline-text">SYSTEM OFFLINE</h1>
+        <p class="blink-text">PRESS ANY KEY TO ATTEMPT REBOOT</p>
+    </div>
+
+    <!-- Reboot PIN Prompt -->
+    <div id="rebootOverlay" class="reboot-overlay hidden">
+        <div class="reboot-box">
+            <h2>SYSTEM REBOOT PIN REQUIRED</h2>
+            <input type="password" id="rebootPin" maxlength="4" autocomplete="off">
+            <p id="rebootError" class="reboot-error"></p>
+        </div>
+    </div>
+
+    <!-- Firebase Compat SDKs (Better support for local testing and Vercel) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <script src="/api/env"></script>
+    <script src="auth.js"></script>
+</body>
+
+</html>

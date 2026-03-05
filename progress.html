@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IACON HALL OF RECORDS - Progress Analysis</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="icon.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .progress-container {
+            width: 100%;
+            max-width: 960px;
+            z-index: 10;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: zoomIn 0.8s ease forwards;
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            width: 100%;
+            background: rgba(5, 5, 20, 0.75);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 204, 0.25);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.5rem;
+            background: rgba(0, 255, 204, 0.07);
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--primary-glow);
+        }
+
+        .filter-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .filter-select,
+        .filter-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            border-color: var(--primary-glow);
+        }
+
+        .filter-select option {
+            background: #0a0a1a;
+        }
+
+        .range-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .analyze-btn {
+            padding: 0.7rem 1.8rem;
+            background: transparent;
+            border: 2px solid var(--primary-glow);
+            color: var(--primary-glow);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn:hover {
+            background: var(--primary-glow);
+            color: #000;
+        }
+
+        .mode-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .mode-tab {
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            background: transparent;
+            color: var(--text-muted);
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .mode-tab.active {
+            background: rgba(0, 255, 204, 0.12);
+            border-color: var(--primary-glow);
+            color: var(--primary-glow);
+        }
+
+        /* Chart Panel */
+        .chart-panel {
+            width: 100%;
+            background: rgba(5, 5, 20, 0.75);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 204, 0.25);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1.5rem;
+            background: rgba(0, 255, 204, 0.07);
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--primary-glow);
+        }
+
+        .chart-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .chart-wrapper {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .chart-inner {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(5, 5, 20, 0.75);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .stat-number {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--primary-glow);
+            text-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .no-data-msg {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            padding: 3rem;
+        }
+
+        /* Footer */
+        .progress-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filter-body {
+                flex-direction: column;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-wrapper {
+                padding: 1rem;
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+
+    <main class="progress-container">
+        <header class="dashboard-header">
+            <h1 class="glitch" data-text="MISSION PROGRESS ANALYSIS">MISSION PROGRESS ANALYSIS</h1>
+            <p class="subtitle">AGENT 001 // TASK COMPLETION RADAR</p>
+        </header>
+
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="day">📅 DAY</button>
+            <button class="mode-tab" data-mode="week">📆 WEEK</button>
+            <button class="mode-tab" data-mode="month">🗓 MONTH</button>
+            <button class="mode-tab" data-mode="range">📊 DATE RANGE</button>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="filter-panel">
+            <div class="filter-title-bar">
+                <span>🔍</span>
+                <span>SELECT ANALYSIS PERIOD</span>
+            </div>
+            <div class="filter-body" id="filterBody">
+                <!-- Injected by JS based on mode -->
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number" id="statDays">—</div>
+                <div class="stat-label">DAYS TRACKED</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statTotal">—</div>
+                <div class="stat-label">TOTAL TASKS</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statPct">—%</div>
+                <div class="stat-label">OVERALL COMPLETION</div>
+            </div>
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="chart-panel">
+            <div class="chart-title-bar">
+                <span>🕸 RADAR: TASK COMPLETION BY DAY</span>
+                <span class="chart-subtitle" id="chartSubtitle">SELECT A PERIOD ABOVE</span>
+            </div>
+            <div class="chart-wrapper">
+                <div class="chart-inner">
+                    <canvas id="radarChart"></canvas>
+                    <div class="no-data-msg" id="noDataMsg">SELECT A TIME PERIOD AND CLICK ANALYSE TO VIEW YOUR PROGRESS
+                        RADAR.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="progress-footer">
+            <a href="/sem2" class="cyber-button">
+                <span class="button-text">← DAILY TRACKER</span>
+            </a>
+            <a href="/missions" class="cyber-button">
+                <span class="button-text">📋 MISSION REPORTS</span>
+            </a>
+            <a href="/dashboard" class="cyber-button">
+                <span class="button-text">🏠 DASHBOARD</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- Environment variable injection -->
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script src="/api/env"></script>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = window.__ENV__ || {
+            apiKey: "LOCAL_BYPASS",
+            authDomain: "LOCAL_BYPASS",
+            projectId: "LOCAL_BYPASS",
+            storageBucket: "LOCAL_BYPASS",
+            messagingSenderId: "LOCAL_BYPASS",
+            appId: "LOCAL_BYPASS"
+        };
+
+        if (typeof firebase !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+            // Silent login
+            firebase.auth().signInAnonymously().catch(err => console.warn("Auth check:", err));
+            var db = firebase.firestore();
+        }
+
+        // ─── CONSTANTS ───────────────────────────────
+        const DAY_NAMES = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const MONTH_NAMES = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+        const TASKS_PER_DAY = {
+            MONDAY: 8, TUESDAY: 8, WEDNESDAY: 8, THURSDAY: 8, FRIDAY: 8, SATURDAY: 4, SUNDAY: 1
+        };
+
+        // ─── MODE ────────────────────────────────────
+        let currentMode = 'day';
+        let radarChart = null;
+
+        document.querySelectorAll('.mode-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentMode = tab.dataset.mode;
+                renderFilter();
+            });
+        });
+
+        // ─── FILTER RENDERING ────────────────────────
+        function renderFilter() {
+            const body = document.getElementById('filterBody');
+            const today = new Date().toISOString().split('T')[0];
+
+            if (currentMode === 'day') {
+                body.innerHTML = `
+                    <div class="filter-group">
+                        <span class="filter-label">SELECT DATE</span>
+                        <input type="date" class="filter-input" id="dayInput" value="${today}" max="${today}">
+                    </div>
+                    <button class="analyze-btn" id="analyzeBtn">⚡ ANALYSE</button>
+                `;
+            } else if (currentMode === 'week') {
+                body.innerHTML = `
+                    <div class="filter-group">
+                        <span class="filter-label">SELECT WEEK STARTING</span>
+                        <input type="date" class="filter-input" id="weekInput" value="${getMondayOf(today)}" max="${today}">
+                    </div>
+                    <button class="analyze-btn" id="analyzeBtn">⚡ ANALYSE</button>
+                `;
+            } else if (currentMode === 'month') {
+                body.innerHTML = `
+                    <div class="filter-group">
+                        <span class="filter-label">SELECT MONTH</span>
+                        <input type="month" class="filter-input" id="monthInput" value="${today.slice(0, 7)}" max="${today.slice(0, 7)}">
+                    </div>
+                    <button class="analyze-btn" id="analyzeBtn">⚡ ANALYSE</button>
+                `;
+            } else if (currentMode === 'range') {
+                body.innerHTML = `
+                    <div class="range-group">
+                        <div class="filter-group">
+                            <span class="filter-label">FROM DATE</span>
+                            <input type="date" class="filter-input" id="rangeFrom" max="${today}">
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">TO DATE</span>
+                            <input type="date" class="filter-input" id="rangeTo" value="${today}" max="${today}">
+                        </div>
+                    </div>
+                    <button class="analyze-btn" id="analyzeBtn">⚡ ANALYSE</button>
+                `;
+            }
+            const btn = document.getElementById('analyzeBtn');
+            if (btn) btn.onclick = analyse;
+        }
+
+        function getMondayOf(dateStr) {
+            const d = new Date(dateStr);
+            const day = d.getDay();
+            const diff = (day === 0) ? -6 : 1 - day;
+            d.setDate(d.getDate() + diff);
+            return d.toISOString().split('T')[0];
+        }
+
+        // ─── DATA RETRIEVAL ───────────────────────────
+        function getDateRange() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (currentMode === 'day') {
+                const val = document.getElementById('dayInput').value;
+                if (!val) return [];
+                return [new Date(val)];
+            }
+            if (currentMode === 'week') {
+                const val = document.getElementById('weekInput').value;
+                if (!val) return [];
+                const start = new Date(val);
+                return Array.from({ length: 7 }, (_, i) => {
+                    const d = new Date(start);
+                    d.setDate(d.getDate() + i);
+                    return d;
+                }).filter(d => d <= today);
+            }
+            if (currentMode === 'month') {
+                const val = document.getElementById('monthInput').value;
+                if (!val) return [];
+                const [yr, mo] = val.split('-').map(Number);
+                const daysInMonth = new Date(yr, mo, 0).getDate();
+                const dates = [];
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const d = new Date(yr, mo - 1, i);
+                    if (d <= today) dates.push(d);
+                }
+                return dates;
+            }
+            if (currentMode === 'range') {
+                const fromVal = document.getElementById('rangeFrom').value;
+                const toVal = document.getElementById('rangeTo').value;
+                if (!fromVal || !toVal) return [];
+                const from = new Date(fromVal);
+                const to = new Date(toVal);
+                if (isNaN(from) || isNaN(to) || from > to) return [];
+                const dates = [];
+                for (let d = new Date(from); d <= to && d <= today; d.setDate(d.getDate() + 1)) {
+                    dates.push(new Date(d));
+                }
+                return dates;
+            }
+            return [];
+        }
+
+        async function getCompletionForDate(date) {
+            const dayName = DAY_NAMES[date.getDay()];
+            const docId = date.toLocaleDateString('en-CA');
+            const docRef = doc(db, "daily_tasks", docId);
+
+            try {
+                const snap = await getDoc(docRef);
+                const data = snap.exists() ? snap.data().tasks || {} : {};
+                const total = TASKS_PER_DAY[dayName] || 1;
+                const done = Object.values(data).filter(Boolean).length;
+                return { done, total };
+            } catch (e) {
+                console.error("Error fetching data for", docId, e);
+                return { done: 0, total: TASKS_PER_DAY[dayName] || 1 };
+            }
+        }
+
+        // ─── ANALYSE ──────────────────────────────────
+        async function analyse() {
+            const btn = document.getElementById('analyzeBtn');
+            btn.textContent = "⏳ LOADING...";
+            btn.disabled = true;
+
+            const dates = getDateRange();
+            if (!dates.length) {
+                alert('PLEASE SELECT A VALID DATE RANGE.');
+                btn.textContent = "⚡ ANALYSE";
+                btn.disabled = false;
+                return;
+            }
+
+            try {
+                // Fetch all data in parallel
+                const results = await Promise.all(dates.map(d => getCompletionForDate(d)));
+
+                const dayAccum = Array.from({ length: 7 }, () => ({ done: 0, total: 0, days: 0 }));
+                let totalDone = 0, totalPossible = 0;
+
+                dates.forEach((date, i) => {
+                    const dow = date.getDay();
+                    const { done, total } = results[i];
+                    dayAccum[dow].done += done;
+                    dayAccum[dow].total += total;
+                    dayAccum[dow].days += 1;
+                    totalDone += done;
+                    totalPossible += total;
+                });
+
+                // Build radar labels & values (Mon-Sun reordered)
+                const orderedDow = [1, 2, 3, 4, 5, 6, 0];
+                const labels = orderedDow.map(i => DAY_LABELS[i]);
+                const values = orderedDow.map(i => {
+                    const acc = dayAccum[i];
+                    if (acc.total === 0) return 0;
+                    return Math.round((acc.done / acc.total) * 100);
+                });
+
+                // Update stats
+                document.getElementById('statDays').textContent = dates.length;
+                document.getElementById('statTotal').textContent = totalPossible;
+                const overallPct = totalPossible ? Math.round((totalDone / totalPossible) * 100) : 0;
+                document.getElementById('statPct').textContent = overallPct + '%';
+
+                // Chart title
+                const subtitleEl = document.getElementById('chartSubtitle');
+                if (currentMode === 'day') subtitleEl.textContent = dates[0].toDateString().toUpperCase();
+                else if (currentMode === 'week') subtitleEl.textContent = `WEEK OF ${dates[0].toDateString().toUpperCase()}`;
+                else if (currentMode === 'month') subtitleEl.textContent = `${MONTH_NAMES[dates[0].getMonth()]} ${dates[0].getFullYear()}`;
+                else subtitleEl.textContent = `${dates[0].toDateString().toUpperCase()} → ${dates[dates.length - 1].toDateString().toUpperCase()}`;
+
+                // Hide no-data msg
+                document.getElementById('noDataMsg').style.display = 'none';
+
+                // Render Radar
+                renderRadar(labels, values);
+            } catch (err) {
+                console.error("Analysis failed", err);
+                alert("AN ERROR OCCURRED DURING DATA ANALYSIS. PLEASE CHECK YOUR FIREBASE CONNECTION.");
+            } finally {
+                btn.textContent = "⚡ ANALYSE";
+                btn.disabled = false;
+            }
+        }
+
+        // ─── RADAR CHART ──────────────────────────────
+        function renderRadar(labels, values) {
+            const canvas = document.getElementById('radarChart');
+            canvas.style.display = 'block';
+
+            if (radarChart) radarChart.destroy();
+
+            radarChart = new Chart(canvas, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'COMPLETION %',
+                        data: values,
+                        backgroundColor: 'rgba(0, 255, 204, 0.12)',
+                        borderColor: 'rgba(0, 255, 204, 0.8)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#00ffcc',
+                        pointBorderColor: '#00ffcc',
+                        pointHoverRadius: 6,
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 25,
+                                color: 'rgba(148, 163, 184, 0.8)',
+                                font: { family: 'Rajdhani', size: 11 },
+                                callback: val => val + '%',
+                                backdropColor: 'transparent'
+                            },
+                            grid: {
+                                color: 'rgba(0, 255, 204, 0.12)',
+                                lineWidth: 1
+                            },
+                            angleLines: {
+                                color: 'rgba(0, 255, 204, 0.2)',
+                                lineWidth: 1
+                            },
+                            pointLabels: {
+                                color: '#e0f2fe',
+                                font: { family: 'Orbitron', size: 12, weight: '700' }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#00ffcc',
+                                font: { family: 'Orbitron', size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ` ${ctx.raw}% COMPLETE`
+                            },
+                            backgroundColor: 'rgba(5, 5, 20, 0.9)',
+                            borderColor: 'rgba(0, 255, 204, 0.4)',
+                            borderWidth: 1,
+                            titleColor: '#00ffcc',
+                            bodyColor: '#e0f2fe',
+                            titleFont: { family: 'Orbitron' },
+                            bodyFont: { family: 'Rajdhani', size: 13 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ─── INIT ─────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('radarChart').style.display = 'none';
+            renderFilter();
+        });
+    </script>
+</body>
+
+</html>

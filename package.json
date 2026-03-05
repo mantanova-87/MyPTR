@@ -1,0 +1,12 @@
+{
+  "name": "iacon-hall-of-records",
+  "version": "1.0.0",
+  "description": "Premium personal records and task tracking system.",
+  "main": "index.html",
+  "scripts": {
+    "start": "servor"
+  },
+  "dependencies": {
+    "firebase": "^9.23.0"
+  }
+}

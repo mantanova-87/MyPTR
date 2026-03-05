@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IACON HALL OF RECORDS - Agent Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="icon.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+    </div>
+
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <h1 class="glitch" data-text="SYSTEM AUTHENTICATED">SYSTEM AUTHENTICATED</h1>
+            <p class="subtitle">ACCESSING SECURE MAINFRAME...</p>
+        </header>
+
+        <section class="agent-profile">
+            <div class="profile-header">
+                <div class="profile-photo">
+                    <!-- Ensure the user saves their photo as agent-photo.jpg in the directory -->
+                    <img src="agent-photo.jpg" alt="Agent Photo"
+                        onerror="this.src='https://via.placeholder.com/150/000000/00ffcc?text=PHOTO+UNAVAILABLE'">
+                    <div class="photo-overlay"></div>
+                </div>
+                <div class="profile-title">
+                    <h2>AGENT PROFILE</h2>
+                    <h3 class="agent-id">ID: 001</h3>
+                </div>
+            </div>
+
+            <div class="profile-details">
+                <div class="detail-item">
+                    <span class="detail-label">NAME</span>
+                    <span class="detail-value text-glow">MANTAVYA KUMAR</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">AGE</span>
+                    <span class="detail-value text-glow" id="agentAge">CALCULATING...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">GENDER</span>
+                    <span class="detail-value text-glow">MALE</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">HEIGHT</span>
+                    <span class="detail-value text-glow">165 CM</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">WEIGHT</span>
+                    <span class="detail-value text-glow">68 KG</span>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="detail-label">CURRENT DEPLOYMENT LOCATION</span>
+                    <span class="detail-value">CENTRAL UNIVERSITY OF JAMMU</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">RANK</span>
+                    <span class="detail-value text-glow">1ST YEAR</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">DESIGNATION</span>
+                    <span class="detail-value text-glow">2ND SEMESTER</span>
+                </div>
+                <div class="detail-item full-width highlight-box">
+                    <span class="detail-label">MISSION DIRECTIVE</span>
+                    <span class="detail-value mission-text">BACHELOR OF TECHNOLOGY IN COMPUTER SCIENCE ENGINEERING WITH
+                        SPECIALISATION IN CYBERSECURITY UNDER THE MENTORSHIP OF DEFENCE RESEARCH AND DEVELOPMENT
+                        ORGANISATION</span>
+                </div>
+            </div>
+
+            <div class="profile-footer">
+                <a href="/missions" class="cyber-button report-btn">
+                    <span class="button-text">📋 REPORT &amp; TRACK MISSION STATUS</span>
+                </a>
+                <a href="/" class="cyber-button logout-btn">
+                    <span class="button-text">TERMINATE SESSION</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Age Calculation based on DOB: 16-12-2006
+            const dob = new Date(2006, 11, 16); // Month is 0-indexed (11 = Dec)
+            const today = new Date();
+
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+
+            document.getElementById('agentAge').textContent = age;
+        });
+    </script>
+</body>
+
+</html>
