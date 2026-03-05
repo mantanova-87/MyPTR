@@ -483,11 +483,14 @@
         async function getCompletionForDate(date) {
             const dayName = DAY_NAMES[date.getDay()];
             const docId = date.toLocaleDateString('en-CA');
-            const docRef = doc(db, "daily_tasks", docId);
+
+            if (typeof db === 'undefined') return { done: 0, total: TASKS_PER_DAY[dayName] || 1 };
+
+            const docRef = db.collection("daily_tasks").doc(docId);
 
             try {
-                const snap = await getDoc(docRef);
-                const data = snap.exists() ? snap.data().tasks || {} : {};
+                const snap = await docRef.get();
+                const data = snap.exists ? snap.data().tasks || {} : {};
                 const total = TASKS_PER_DAY[dayName] || 1;
                 const done = Object.values(data).filter(Boolean).length;
                 return { done, total };
